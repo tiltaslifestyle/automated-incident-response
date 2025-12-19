@@ -1,4 +1,9 @@
 # Automated Incident Response
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Fail2Ban](https://img.shields.io/badge/Fail2Ban-222222?style=for-the-badge&logoColor=white)
+![AbuseIPDB](https://img.shields.io/badge/AbuseIPDB-4e7e14?style=for-the-badge&logoColor=black)
+![ntfy.sh](https://img.shields.io/badge/ntfy.sh-3e9e8c?style=for-the-badge&logoColor=white)
+
 SecOps project demonstrating log-based intrusion detection, threat intelligence enrichment, decision logic, and alerting.
 
 This project is designed to be triggered by **Fail2Ban** and perform **incident response**, not detection.
