@@ -23,7 +23,7 @@ class Engine:
         data = report.get("data", {})
         score = data.get("abuseConfidenceScore", 0)
         country = data.get("countryCode", "Unknown")
-        # isp = data.get("isp", "Unknown")
+        isp = data.get("isp", "Unknown")
 
         print(f"[*] Report: Score {score}/100 | Country: {country}")
 
@@ -34,11 +34,7 @@ class Engine:
             priority = "high"
             
             message = (
-                f"Malicious IP Detected!\n"
-                f"Score: {score}/100\n"
-                f"Country: {country}\n"
-                # f"ISP: {isp}\n"
-                f"Action: Investigate immediately!"
+                f"Score: {score}/100 | Country: {country} | ISP: {isp} | Action: Blocked"
             )
             
             if self.notifier.send(message, title, priority, tags):
