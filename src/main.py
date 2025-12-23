@@ -14,10 +14,27 @@ def load_config():
     
     try:
         with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
+                    settings = yaml.safe_load(f)
     except Exception as e:
         print(f"[CRITICAL] Error parsing settings.yaml: {e}")
         sys.exit(1)
+
+    # CONFIG VALIDATION
+    required_paths = [
+        ("api", "key"),
+        ("ntfy", "topic"),
+        ("thresholds", "critical_score"),
+    ]
+
+    for path in required_paths:
+        current = settings
+        for key in path:
+            if key not in current:
+                print(f"[CRITICAL] Missing config key: {'.'.join(path)}")
+                sys.exit(1)
+            current = current[key]
+
+    return settings
 
 def main():
     parser = argparse.ArgumentParser(description="IP Threat Analysis")
