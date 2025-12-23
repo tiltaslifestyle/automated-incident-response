@@ -17,6 +17,15 @@ class Engine:
         self.intel = ThreatIntel(self.api_key)
         self.notifier = Notifier(self.topic)
 
+    def format_alert(self, ip_address, score, country, isp):
+        return (
+            f"IP: {ip_address} | "
+            f"Score: {score}/100 | "
+            f"Country: {country} | "
+            f"ISP: {isp} | "
+            f"Action: Blocked"
+        )
+
     def analyze_ip(self, ip_address: str):
         print(f"[*] Engine: Analyzing {ip_address}...")
         try:
@@ -38,20 +47,22 @@ class Engine:
         print(f"[*] Report: Score {score}/100 | Country: {country}")
 
         if score >= self.threshold:
-            # CRITICAL ALERT
             title = f"SECURITY ALERT: {ip_address}"
             tags = "rotating_light,skull"
             priority = "high"
-            
-            message = (
-                f"Score: {score}/100 | Country: {country} | ISP: {isp} | Action: Blocked"
+
+            message = self.format_alert(
+                ip_address=ip_address,
+                score=score,
+                country=country,
+                isp=isp,
             )
-            
+
             if self.notifier.send(message, title, priority, tags):
                 print("[+] Alert sent successfully.")
             else:
                 print("[-] Failed to send alert.")
-                
+
         else:
             # SAFE / LOW RISK 
             print(f"[*] IP {ip_address} is below threshold ({self.threshold}). No alert sent.")
