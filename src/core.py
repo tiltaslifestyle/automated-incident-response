@@ -1,18 +1,28 @@
 from intel import ThreatIntel
 from notifier import Notifier
+import ipaddress
 
 class Engine:
     def __init__(self, settings: dict):
         self.settings = settings
         self.api_key = settings["api"]["key"]
         self.topic = settings["ntfy"]["topic"]
-        self.threshold = settings["thresholds"]["critical_score"]
+
+        threshold = settings["thresholds"]["critical_score"]
+        if not isinstance(threshold, int) or not 0 <= threshold <= 100:
+            raise ValueError("critical_score must be int between 0 and 100")
         
+        self.threshold = threshold
+            
         self.intel = ThreatIntel(self.api_key)
         self.notifier = Notifier(self.topic)
 
     def analyze_ip(self, ip_address: str):
         print(f"[*] Engine: Analyzing {ip_address}...")
+        try:
+            ipaddress.ip_address(ip_address)
+        except ValueError:
+            raise ValueError(f"Invalid IP address: {ip_address}")
         
         report = self.intel.check_ip(ip_address)
         
