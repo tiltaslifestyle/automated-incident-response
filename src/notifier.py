@@ -26,27 +26,3 @@ class Notifier:
         except requests.exceptions.RequestException as e:
             print(f"[Error] Notification failed: {e}")
             return False
-
-if __name__ == "__main__":
-    import yaml
-    
-    def load_settings(path="config/settings.yaml"):
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-
-    settings = load_settings()
-    topic = settings["ntfy"]["topic"]
-
-    notifier = Notifier(topic)
-    
-    success = notifier.send(
-        message="SSH Brute Force detected from 192.168.1.55!", 
-        title="Intrusion Attempt", 
-        priority="high",
-        tags="rotating_light,lock"
-    )
-    
-    if success:
-        print("Test notification sent!")
-    else:
-        print("Test failed.")

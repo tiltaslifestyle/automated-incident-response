@@ -45,19 +45,3 @@ class Engine:
         else:
             # SAFE / LOW RISK 
             print(f"[*] IP {ip_address} is below threshold ({self.threshold}). No alert sent.")
-
-if __name__ == "__main__":
-    import yaml
-    
-    def load_settings(path="config/settings.yaml"):
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-
-    settings = load_settings()
-    engine = Engine(settings)
-    
-    print("\n--- TEST CASE: BAD IP ---")
-    engine.analyze_ip("109.107.189.250") 
-    
-    print("\n--- TEST CASE: GOOD IP ---")
-    engine.analyze_ip("8.8.8.8")

@@ -23,26 +23,3 @@ class ThreatIntel:
         except requests.exceptions.RequestException as e:
             print(f"[Error] API request failed: {e}")
             return None
-
-if __name__ == "__main__":
-    import yaml
-    
-    def load_settings(path="config/settings.yaml"):
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-
-    try:
-        settings = load_settings()
-        key = settings["api"]["key"]
-        
-        intel = ThreatIntel(key)
-        result = intel.check_ip("118.25.6.39")
-        
-        print("Threat Intelligence Result:")
-        import json
-        print(json.dumps(result, indent=4))
-        
-    except FileNotFoundError:
-        print("[Error]: config/settings.yaml not found")
-    except KeyError:
-        print("[Error]: Missing api key in settings.yaml")
