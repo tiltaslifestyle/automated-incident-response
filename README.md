@@ -50,9 +50,9 @@ SecOps utility designed to bridge the gap between detection (**Fail2Ban**) and d
 ```
 
 ## See it in Action
-Received alerts directly on your mobile device via the Ntfy app:
+Received alerts directly on your mobile device via the **Ntfy app**:
 
-<p align="center">
+<p>
   <img src="screenshot.png" alt="Ntfy Alert Screenshot" width="300">
 </p>
 

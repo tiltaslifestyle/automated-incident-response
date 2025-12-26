@@ -37,6 +37,7 @@ def load_config():
                 sys.exit(1)
             current = current[key]
 
+    logger.info("Config loaded. Starting analysis...")
     return settings
 
 def main():
