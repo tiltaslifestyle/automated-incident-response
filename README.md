@@ -49,18 +49,25 @@ SecOps utility designed to bridge the gap between detection (**Fail2Ban**) and d
 [ Admin / User ]
 ```
 
+## See it in Action
+Received alerts directly on your mobile device via the Ntfy app:
+
+<p align="center">
+  <img src="screenshot.png" alt="Ntfy Alert Screenshot" width="300">
+</p>
+
 ## Scope & Responsibilities
 - **Detection:** Handled by Fail2Ban (log parsing).
-- **Enrichment:** Handled by intel.py (AbuseIPDB API).
-- **Decision:** Handled by core.py based on `critical_score` threshold (0-100).
+- **Enrichment:** Handled by `intel.py` (AbuseIPDB API).
+- **Decision:** Handled by `core.py` based on `critical_score` threshold (0-100).
 Alerts are triggered when `score >= threshold` (default: 50), indicating potentially malicious IPs.
-- **Alerting:** Handled by notifier.py (Ntfy push notifications).
+- **Alerting:** Handled by `notifier.py` (Ntfy push notifications).
+- **Logging:** Handled by `logger.py`. All events are recorded for audit.
 
 ## Installation & Setup
 1. **Clone the repository:**
 ```bash
 git clone https://github.com/tiltaslifestyle/automated-incident-response.git
-
 cd automated-incident-response
 ```
 
@@ -83,6 +90,16 @@ You can run the tool manually to analyze specific IPs without waiting for an att
 python3 src/main.py 109.107.189.250
 ```
 *Output: If the IP is malicious, you will receive a push notification.*
+
+## Observability & Logs
+Every execution is audited. Check `automated-incident-response.log` to see the decision flow:
+
+```text
+2025-12-26 14:00:01 - INFO - [main] - Config loaded. Starting analysis...
+2025-12-26 14:00:01 - INFO - [core] - Engine: Analyzing 118.25.6.39...
+2025-12-26 14:00:02 - INFO - [core] - Report: Score 100/100 | Country: CN
+2025-12-26 14:00:02 - INFO - [core] - Alert sent successfully.
+```
 
 ## Fail2Ban Integration
 To use this tool as an automated response action:
@@ -122,13 +139,14 @@ sudo systemctl restart fail2ban
 ```
 .
 ├── config/
-│   └── settings.yaml        # API keys, thresholds (gitignored)
+│   └── settings.yaml                # API key, threshold, topic (gitignored)
 ├── src/
-│   ├── __init__.py          # Package boundary
-│   ├── main.py              # Entrypoint / Orchestrator (CLI)
-│   ├── core.py              # Incident response decision engine
-│   ├── intel.py             # Threat intelligence enrichment (AbuseIPDB)
-│   └── notifier.py          # Alert delivery (ntfy.sh)
-├── requirements.txt         # Python dependencies
+│   ├── __init__.py                  # Package boundary
+│   ├── main.py                      # Entrypoint / Orchestrator (CLI)
+│   ├── core.py                      # Incident response decision engine
+│   ├── intel.py                     # Threat intelligence enrichment (AbuseIPDB)
+│   ├── notifier.py                  # Alert delivery (ntfy.sh)
+│   └── logger.py                    # Centralized logging configuration
+├── requirements.txt                 # Python dependencies
 └── README.md
 ```
