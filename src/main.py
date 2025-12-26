@@ -3,20 +3,23 @@ import os
 import sys
 import yaml
 from core import Engine
+from logger import setup_logger
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(BASE_DIR, 'config', 'settings.yaml')
 
+logger = setup_logger(__name__)
+
 def load_config():
     if not os.path.exists(CONFIG_PATH):
-        print(f"[CRITICAL] Config file not found at: {CONFIG_PATH}")
+        logger.critical(f"Config file not found at: {CONFIG_PATH}")
         sys.exit(1)
     
     try:
         with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-                    settings = yaml.safe_load(f)
+            settings = yaml.safe_load(f)
     except Exception as e:
-        print(f"[CRITICAL] Error parsing settings.yaml: {e}")
+        logger.critical(f"Error parsing settings.yaml: {e}")
         sys.exit(1)
 
     # CONFIG VALIDATION
@@ -30,7 +33,7 @@ def load_config():
         current = settings
         for key in path:
             if key not in current:
-                print(f"[CRITICAL] Missing config key: {'.'.join(path)}")
+                logger.critical(f"Missing config key: {'.'.join(path)}")
                 sys.exit(1)
             current = current[key]
 
@@ -49,10 +52,10 @@ def main():
         engine.analyze_ip(args.ip)
         
     except KeyboardInterrupt:
-        print("\n[!] User interrupted execution.")
+        logger.info("User interrupted execution.")
         sys.exit(0)
     except Exception as e:
-        print(f"[CRITICAL] Runtime Error: {e}")
+        logger.critical(f"Runtime Error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

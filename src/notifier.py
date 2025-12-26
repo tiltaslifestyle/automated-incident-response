@@ -1,4 +1,7 @@
 import requests
+from logger import setup_logger
+
+logger = setup_logger(__name__)
 
 class Notifier:
     def __init__(self, topic: str):
@@ -24,5 +27,5 @@ class Notifier:
             return True
             
         except requests.exceptions.RequestException as e:
-            print(f"[Error] Notification failed: {e}")
+            logger.error(f"Notification failed: {e}")
             return False

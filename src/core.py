@@ -1,6 +1,9 @@
 from intel import ThreatIntel
 from notifier import Notifier
 import ipaddress
+from logger import setup_logger
+
+logger = setup_logger(__name__)
 
 class Engine:
     def __init__(self, settings: dict):
@@ -10,6 +13,7 @@ class Engine:
 
         threshold = settings["thresholds"]["critical_score"]
         if not isinstance(threshold, int) or not 0 <= threshold <= 100:
+            logger.error("critical_score must be int between 0 and 100")
             raise ValueError("critical_score must be int between 0 and 100")
         
         self.threshold = threshold
@@ -27,16 +31,17 @@ class Engine:
         )
 
     def analyze_ip(self, ip_address: str):
-        print(f"[*] Engine: Analyzing {ip_address}...")
+        logger.info(f"Engine: Analyzing {ip_address}...")
         try:
             ipaddress.ip_address(ip_address)
         except ValueError:
+            logger.error(f"Invalid IP address: {ip_address}")
             raise ValueError(f"Invalid IP address: {ip_address}")
         
         report = self.intel.check_ip(ip_address)
         
         if not report:
-            print(f"[!] Engine: No data received for {ip_address}. Skipping.")
+            logger.info(f"Engine: No data received for {ip_address}. Skipping.")
             return
         
         data = report.get("data", {})
@@ -44,7 +49,7 @@ class Engine:
         country = data.get("countryCode", "Unknown")
         isp = data.get("isp", "Unknown")
 
-        print(f"[*] Report: Score {score}/100 | Country: {country}")
+        logger.info(f"Report: Score {score}/100 | Country: {country}")
 
         if score >= self.threshold:
             title = f"SECURITY ALERT: {ip_address}"
@@ -59,10 +64,10 @@ class Engine:
             )
 
             if self.notifier.send(message, title, priority, tags):
-                print("[+] Alert sent successfully.")
+                logger.info("Alert sent successfully.")
             else:
-                print("[-] Failed to send alert.")
+                logger.error("Failed to send alert.")
 
         else:
             # SAFE / LOW RISK 
-            print(f"[*] IP {ip_address} is below threshold ({self.threshold}). No alert sent.")
+            logger.info(f"IP {ip_address} is below threshold ({self.threshold}). No alert sent.")

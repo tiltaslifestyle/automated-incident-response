@@ -1,4 +1,7 @@
 import requests
+from logger import setup_logger
+
+logger = setup_logger(__name__)
 
 class ThreatIntel:
     def __init__(self, api_key):
@@ -21,5 +24,5 @@ class ThreatIntel:
             return response.json()
         
         except requests.exceptions.RequestException as e:
-            print(f"[Error] API request failed: {e}")
+            logger.error(f"API request failed: {e}")
             return None
